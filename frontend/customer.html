@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Track Order</title>
+</head>
+<body>
+
+<h1>Track Your Order</h1>
+
+<input type="number" id="tableNumber" placeholder="Table Number">
+
+<button onclick="trackOrder()">
+    Track
+</button>
+
+<div id="result"></div>
+
+<script>
+async function trackOrder() {
+
+const tableNumber =
+    Number(document.getElementById("tableNumber").value);
+
+const response =
+    await fetch("http://localhost:3000/orders");
+
+const orders =
+    await response.json();
+
+    const order =
+    orders.find(
+        o => String(o.table) === String(tableNumber)
+    );
+
+if (!order) {
+
+    document.getElementById("result").innerHTML =
+        "<h3>No order found</h3>";
+
+    return;
+}
+
+document.getElementById("result").innerHTML = `
+    <h2>Table ${order.table}</h2>
+    <h3>Status: ${order.status}</h3>
+`;
+}
+</script>
+
+</body>
+</html>

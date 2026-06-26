@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Order</title>
+</head>
+<body>
+
+<button onclick="sendOrder()">
+    Send Test Order
+</button>
+
+<script>
+async function sendOrder() {
+
+    const response = await fetch(
+        "http://localhost:3000/orders",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                table: 6,
+                items: [
+                    {
+                        name: "burger",
+                        quantity: 2
+                    }
+                ]
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+    alert("Order Sent!");
+}
+</script>
+
+</body>
+</html>

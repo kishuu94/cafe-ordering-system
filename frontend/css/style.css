@@ -1,0 +1,110 @@
+        /* Premium Coffee Shop Theme Variables */
+        :root {
+            --cafe-dark: #3e2723;
+            --cafe-primary: #8d6e63;
+            --cafe-accent: #d7ccc8;
+            --cafe-bg: #fdfbf7;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cafe-bg);
+            color: var(--cafe-dark);
+        }
+
+        h1, h2, h3, .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            color: var(--cafe-dark);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: white;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(141, 110, 99, 0.15);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        /* Buttons */
+        .btn-cafe {
+            background-color: var(--cafe-primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 600;
+        }
+
+        .btn-cafe:hover {
+            background-color: var(--cafe-dark);
+            color: white;
+        }
+
+        /* Sticky Cart Button (Floating Action Button) */
+        .floating-cart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--cafe-dark);
+            color: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.05);
+        }
+
+        .cart-badge {
+            background-color: #e53935;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 10px;
+            font-size: 0.9rem;
+            margin-left: 8px;
+        }
+    
+        /* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation to cards and cart items */
+.card, .cart-item-anim {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Ensure buttons transition smoothly */
+.btn {
+    transition: all 0.3s ease;
+}
