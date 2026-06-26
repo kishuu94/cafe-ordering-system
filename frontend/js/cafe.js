@@ -174,7 +174,7 @@ async function placeOrder() {
     }
 
     try {
-        const response = await fetch("https://YOUR-RENDER-URL.onrender.com/orders", {
+        const response = await fetch("https://cafe-ordering-system-j6sr.onrender.com/orders", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
