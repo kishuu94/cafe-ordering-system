@@ -174,7 +174,7 @@ async function placeOrder() {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/orders", {
+        const response = await fetch("https://YOUR-RENDER-URL.onrender.com/orders", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
