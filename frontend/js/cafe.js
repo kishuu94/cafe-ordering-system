@@ -187,7 +187,7 @@ async function placeOrder() {
 
         const data = await response.json();
         console.log(data);
-        alert("Order Sent!");
+        showToast("Order placed successfully!", "success");
         
         // Clear cart on success
         cart = [];

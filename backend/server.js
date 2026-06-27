@@ -1,5 +1,26 @@
+require("dotenv").config();
+
+// console.log(process.env.MONGODB_URI);
+
 const express = require("express");
 const cors = require("cors");
+const { MongoClient } = require("mongodb");
+
+const client = new MongoClient(process.env.MONGODB_URI);
+
+async function connectDB() {
+    try {
+        await client.connect();
+        console.log("✅ MongoDB Connected");
+    } catch (error) {
+        console.error(error);
+    }
+}
+ 
+connectDB();
+
+const db = client.db("cafeDB");
+const ordersCollection = db.collection("orders");
 
 const app = express();
 
@@ -8,9 +29,6 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-
-let orders = [];
 
 // Home Page
 app.get("/", (req, res) => {
@@ -18,12 +36,19 @@ app.get("/", (req, res) => {
 });
 
 // Get All Orders
-app.get("/orders", (req, res) => {
-    res.json(orders);
+app.get("/orders", async (req, res) => {
+    try {
+        const orders = await ordersCollection.find().toArray();
+        res.json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching orders" });
+    }
 });
 
 // Create Order
-app.post("/orders", (req, res) => {
+
+app.post("/orders", async (req, res) => {
 
     const order = {
         id: Date.now(),
@@ -32,34 +57,57 @@ app.post("/orders", (req, res) => {
         status: "Pending"
     };
 
-    orders.push(order);
+    try {
+        await ordersCollection.insertOne(order);
 
-    console.log("New Order:");
-    console.log(order);
+        console.log("New Order:");
+        console.log(order);
 
-    res.json({
-        success: true,
-        order
-    });
-}); 
+        res.json({
+            success: true,
+            order
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Error creating order"
+        });
+    }
+});
 
-app.put("/orders/:id", (req, res) => {
+app.put("/orders/:id", async (req, res) => {
 
     const orderId = Number(req.params.id);
 
-    const order = orders.find(
-        o => o.id === orderId
-    );
+    try {
 
-    if (!order) {
-        return res.status(404).json({
-            message: "Order not found"
+        const result = await ordersCollection.updateOne(
+            { id: orderId },
+            {
+                $set: {
+                    status: req.body.status
+                }
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        const updatedOrder = await ordersCollection.findOne({
+            id: orderId
+        });
+
+        res.json(updatedOrder);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Error updating order"
         });
     }
-
-    order.status = req.body.status;
-
-    res.json(order);
 });
 
 app.listen(PORT, () => {
