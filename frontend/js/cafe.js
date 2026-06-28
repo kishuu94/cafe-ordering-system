@@ -1,3 +1,4 @@
+
 // --- UI Helpers ---
 function showToast(message, type = 'error') {
     const toastEl = document.getElementById('appToast');
@@ -24,6 +25,23 @@ const menuItems = [
     { name: "Burger", price: 180, category: "Food", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80" },
     { name: "Pizza", price: 250, category: "Food", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80" }
 ];
+
+const params = new URLSearchParams(window.location.search);
+
+const tableNumber = params.get("table");
+console.log("QR Table:", tableNumber);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const heading =
+        document.getElementById("tableHeading");
+
+    if (heading && tableNumber) {
+        heading.innerText =
+            `Table ${tableNumber}`;
+    }
+
+});
 
 let cart = [];
 let currentCategory = 'All';
@@ -116,6 +134,7 @@ function renderCart() {
 
     console.log("Cart:", cart);
 console.log("Total Items:", totalItems);
+
     
     // Update sticky cart badge count
     cartCountBadge.innerText = totalItems;
@@ -162,18 +181,22 @@ function decreaseQuantity(name) {
 
 async function placeOrder() {
     if (cart.length === 0) {
-        showToast("Your cart is empty! Add some items first.", "error");
+        showToast(
+            "Your cart is empty! Add some items first.",
+            "error"
+        );
         return;
     }
 
     const tableNumber = document.getElementById("tableNumber").value;
 
     if (!tableNumber) {
-      showToast("Please enter your table number above.");
+        showToast("Invalid QR Code.", "error");
         return;
     }
 
     try {
+        console.log("Sending table:", tableNumber);
         const response = await fetch("https://cafe-ordering-system-j6sr.onrender.com/orders", {
             method: "POST",
             headers: {
