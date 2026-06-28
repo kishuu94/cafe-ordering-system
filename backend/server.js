@@ -40,6 +40,7 @@ app.get("/", (req, res) => {
 });
 
 // Get All Orders
+
 app.get("/orders", async (req, res) => {
     try {
         console.log("GET /orders hit");

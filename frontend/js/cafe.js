@@ -188,8 +188,6 @@ async function placeOrder() {
         return;
     }
 
-    const tableNumber = document.getElementById("tableNumber").value;
-
     if (!tableNumber) {
         showToast("Invalid QR Code.", "error");
         return;
