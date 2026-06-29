@@ -103,6 +103,9 @@ app.put("/orders/:id", async (req, res) => {
             {
                 $set: {
                     status: req.body.status
+                }, 
+                $currentDate: {
+                    updatedAt: true
                 }
             }
         );

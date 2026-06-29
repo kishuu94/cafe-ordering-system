@@ -143,6 +143,43 @@ console.log("Total Items:", totalItems);
 
 // --- Original Core Logic (Unchanged in Behavior) ---
 
+function startCountdown(readyAt) {
+
+    setInterval(() => {
+
+        const remaining =
+            readyAt - Date.now();
+
+        if (remaining <= 0) {
+
+            document.getElementById(
+                "orderStatus"
+            ).innerHTML =
+                "✅ Your order is ready!";
+
+            return;
+        }
+
+        const minutes =
+            Math.floor(
+                remaining / 60000
+            );
+
+        const seconds =
+            Math.floor(
+                (remaining % 60000) / 1000
+            );
+
+        document.getElementById(
+            "orderStatus"
+        ).innerHTML =
+            `⏳ Preparing: ${minutes}:${seconds
+                .toString()
+                .padStart(2, "0")}`;
+
+    }, 1000);
+}
+
 function addToCart(name) {
     const menuItem = menuItems.find(item => item.name === name);
     const existing = cart.find(item => item.name === name);
@@ -207,6 +244,14 @@ async function placeOrder() {
         });
 
         const data = await response.json();
+        localStorage.setItem(
+            "orderId",
+            data.order.id
+        );
+        console.log(
+            "Saved:",
+            localStorage.getItem("orderId")
+        );
         console.log(data);
         showToast("Order placed successfully!", "success");
         
