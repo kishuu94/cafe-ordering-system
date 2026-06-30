@@ -1,110 +1,743 @@
-        /* Premium Coffee Shop Theme Variables */
-        :root {
-            --cafe-dark: #3e2723;
-            --cafe-primary: #8d6e63;
-            --cafe-accent: #d7ccc8;
-            --cafe-bg: #fdfbf7;
-        }
+/* ═══════════════════════════════════════════════════════════
+   BLACK COFFEE — style.css
+   Design tokens derived from screenshot analysis
+   All JS-depended-upon IDs/classes are UNCHANGED.
+   New visual classes are prefixed bc- to avoid conflicts.
+═══════════════════════════════════════════════════════════ */
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--cafe-bg);
-            color: var(--cafe-dark);
-        }
+/* ── DESIGN TOKENS ─────────────────────────────────────── */
+:root {
+    /* Brand palette from screenshot */
+    --bc-tan:        #C8965A;   /* caramel / warm tan — hero bg, accents */
+    --bc-tan-light:  #D4A96A;   /* lighter tan for gradients */
+    --bc-tan-bg:     #C8965A20; /* subtle tan wash */
+    --bc-dark:       #3B1A0F;   /* deep espresso dark — navbar, footer, cards */
+    --bc-dark-mid:   #5C2D1A;   /* mid-brown for card labels */
+    --bc-cream:      #F7F0E6;   /* off-white page background */
+    --bc-card-bg:    #2A1208;   /* product card dark background */
+    --bc-text-head:  #1E0D05;   /* heading color */
+    --bc-text-body:  #4A3728;   /* body text */
+    --bc-text-muted: #8A7060;   /* muted text */
+    --bc-white:      #FFFFFF;
 
-        h1, h2, h3, .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            color: var(--cafe-dark);
-        }
+    /* Typography */
+    --bc-font-serif:  'Playfair Display', Georgia, serif;
+    --bc-font-sans:   'Poppins', system-ui, sans-serif;
 
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-        }
+    /* Spacing */
+    --bc-section-py: 80px;
+    --bc-radius-card: 16px;
+    --bc-radius-btn:  50px;
+}
 
-        /* Card Styling */
-        .card {
-            border: none;
-            border-radius: 12px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            background-color: white;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(141, 110, 99, 0.15);
-        }
+/* ── RESET & BASE ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
+html { scroll-behavior: smooth; }
 
-        /* Buttons */
-        .btn-cafe {
-            background-color: var(--cafe-primary);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 8px 20px;
-            font-weight: 600;
-        }
+body {
+    font-family: var(--bc-font-sans);
+    background-color: var(--bc-cream);
+    color: var(--bc-text-body);
+    overflow-x: hidden;
+}
 
-        .btn-cafe:hover {
-            background-color: var(--cafe-dark);
-            color: white;
-        }
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--bc-font-serif);
+    color: var(--bc-text-head);
+    line-height: 1.2;
+}
 
-        /* Sticky Cart Button (Floating Action Button) */
-        .floating-cart {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--cafe-dark);
-            color: white;
-            border-radius: 50px;
-            padding: 15px 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+/* ── TABLE BADGE (QR scan indicator) ───────────────────── */
+/* id="tableHeading" is targeted by JS — we wrap it visually */
+.table-badge-wrap {
+    padding: 8px 0;
+    background: var(--bc-dark);
+}
 
-        .floating-cart:hover {
-            transform: scale(1.05);
-        }
+.table-badge-wrap:empty,
+.table-badge-wrap:has(#tableHeading:empty) {
+    display: none;
+}
 
-        .cart-badge {
-            background-color: #e53935;
-            color: white;
-            border-radius: 50%;
-            padding: 4px 10px;
-            font-size: 0.9rem;
-            margin-left: 8px;
-        }
-    
-        /* Animation Keyframes */
+#tableHeading:empty + * { display: none; }
+
+.table-badge {
+    display: inline-block;
+    background: var(--bc-tan);
+    color: var(--bc-white);
+    font-family: var(--bc-font-serif);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 4px 20px;
+    border-radius: var(--bc-radius-btn);
+    letter-spacing: 0.05em;
+}
+
+/* Hide the wrapper when table heading is empty */
+#tableHeading:empty { display: none; }
+.table-badge-wrap:has(#tableHeading:empty) { display: none; }
+
+/* ── NAVBAR ─────────────────────────────────────────────── */
+.bc-navbar {
+    background-color: var(--bc-cream);
+    border-bottom: 1px solid rgba(62, 30, 10, 0.08);
+    padding: 12px 0;
+    transition: box-shadow 0.3s;
+}
+
+.bc-navbar.scrolled {
+    box-shadow: 0 4px 20px rgba(59, 26, 15, 0.12);
+}
+
+/* Brand / Logo */
+.bc-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--bc-dark) !important;
+    font-family: var(--bc-font-serif);
+}
+
+.bc-steam {
+    color: var(--bc-dark);
+    line-height: 0;
+}
+
+.bc-steam svg { display: block; }
+
+.bc-brand-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--bc-dark);
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+
+/* Nav links */
+.bc-nav-link {
+    font-family: var(--bc-font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--bc-text-body) !important;
+    padding: 6px 2px !important;
+    position: relative;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+}
+
+.bc-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--bc-tan);
+    transition: width 0.25s ease;
+    border-radius: 2px;
+}
+
+.bc-nav-link:hover,
+.bc-nav-link.active {
+    color: var(--bc-dark) !important;
+}
+
+.bc-nav-link:hover::after,
+.bc-nav-link.active::after {
+    width: 100%;
+}
+
+/* Search */
+.bc-search-wrap {
+    position: relative;
+    min-width: 200px;
+}
+
+.bc-search {
+    background: rgba(59, 26, 15, 0.06);
+    border: 1.5px solid rgba(59, 26, 15, 0.15);
+    border-radius: var(--bc-radius-btn);
+    padding: 7px 16px 7px 36px;
+    font-size: 0.85rem;
+    color: var(--bc-text-head);
+    font-family: var(--bc-font-sans);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.bc-search:focus {
+    border-color: var(--bc-tan);
+    background: var(--bc-white);
+    box-shadow: 0 0 0 3px rgba(200, 150, 90, 0.15);
+    outline: none;
+}
+
+.bc-search::placeholder { color: var(--bc-text-muted); }
+
+.bc-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--bc-text-muted);
+    pointer-events: none;
+}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.bc-hero {
+    position: relative;
+    height: 500px;
+    min-height: 380px;
+    background-image: url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1400&q=85');
+    background-size: cover;
+    background-position: center 60%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.bc-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        rgba(30, 13, 5, 0.70) 0%,
+        rgba(30, 13, 5, 0.35) 60%,
+        rgba(30, 13, 5, 0.10) 100%
+    );
+}
+
+.bc-hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 0 6%;
+    max-width: 560px;
+}
+
+.bc-hero-eyebrow {
+    font-family: var(--bc-font-sans);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.bc-hero-headline {
+    font-family: var(--bc-font-serif);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 700;
+    color: var(--bc-white);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    line-height: 1;
+}
+
+.bc-btn-hero {
+    display: inline-block;
+    border: 2px solid var(--bc-white);
+    color: var(--bc-white);
+    background: transparent;
+    border-radius: var(--bc-radius-btn);
+    padding: 12px 36px;
+    font-family: var(--bc-font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.25s, color 0.25s;
+}
+
+.bc-btn-hero:hover {
+    background: var(--bc-white);
+    color: var(--bc-dark);
+}
+
+/* ── SECTIONS ───────────────────────────────────────────── */
+.bc-section {
+    padding: var(--bc-section-py) 0;
+}
+
+.bc-categories-section {
+    background-color: var(--bc-tan);
+    background-image: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+
+.bc-menu-section {
+    background-color: var(--bc-tan);
+}
+
+.bc-section-header { margin-bottom: 16px; }
+
+.bc-section-title {
+    font-family: var(--bc-font-sans);
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 600;
+    color: var(--bc-dark);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.bc-section-subtitle {
+    font-size: 0.9rem;
+    color: var(--bc-dark-mid);
+    margin-bottom: 0;
+}
+
+/* ── FILTER BUTTONS ─────────────────────────────────────── */
+/* onclick attrs preserved; only visual style changes */
+.bc-filter-btn {
+    border: 2px solid var(--bc-dark);
+    color: var(--bc-dark);
+    background: transparent;
+    border-radius: var(--bc-radius-btn);
+    padding: 7px 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: var(--bc-font-sans);
+    letter-spacing: 0.04em;
+    transition: background 0.2s, color 0.2s;
+}
+
+.bc-filter-btn:hover,
+.bc-filter-btn.bc-filter-active {
+    background: var(--bc-dark);
+    color: var(--bc-white);
+}
+
+/* ── CATEGORY CARDS (visual showcase) ───────────────────── */
+.bc-cat-card {
+    position: relative;
+    border-radius: var(--bc-radius-card);
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.bc-cat-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+}
+
+.bc-cat-card:hover img {
+    transform: scale(1.07);
+}
+
+.bc-cat-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(30,13,5,0.72) 0%, rgba(30,13,5,0) 55%);
+    border-radius: var(--bc-radius-card);
+}
+
+.bc-cat-label {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 2;
+    font-family: var(--bc-font-sans);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--bc-white);
+    letter-spacing: 0.02em;
+    padding: 0 8px;
+}
+
+/* ── MENU / PRODUCT CARDS ───────────────────────────────── */
+/*
+   CRITICAL: The #menu div and .card classes are used by cafe.js's loadMenu().
+   The JS renders: <div class="col"><div class="card h-100 shadow-sm">…</div></div>
+   We override the visual styling of .card here without breaking JS behaviour.
+   All JS-injected HTML from loadMenu() still works because:
+   - #menu grid container is preserved
+   - .card, .card-img-top, .card-body, .card-title, .card-text all still exist
+   - .btn-cafe class is still styled (redefined below)
+   - onclick="addToCart('${item.name}')" attributes come from JS unchanged
+*/
+
+/* Override Bootstrap card for dark product card look */
+#menu .card {
+    border: none !important;
+    border-radius: var(--bc-radius-card) !important;
+    background-color: var(--bc-card-bg) !important;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    animation: bcFadeInUp 0.45s ease forwards;
+}
+
+#menu .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Like badge overlaid on image — visual enhancement only */
+#menu .card::before {
+    content: '👍  ' attr(data-likes);
+    display: none; /* disabled — JS doesn't set data-likes, so we skip it */
+}
+
+#menu .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0 !important;
+    display: block;
+}
+
+#menu .card-body {
+    background: var(--bc-card-bg);
+    padding: 16px;
+    text-align: center;
+}
+
+/* Card title — white text on dark bg */
+#menu .card-title {
+    color: var(--bc-white) !important;
+    font-family: var(--bc-font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Price text */
+#menu .card-text {
+    color: rgba(255,255,255,0.6) !important;
+    font-size: 0.88rem;
+    margin-bottom: 14px;
+}
+
+/* Price badge — matches the "200Af" pill from the screenshot */
+#menu .card-text::before {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-right: 6px;
+    vertical-align: middle;
+    content: '₹';
+}
+
+/* Add To Cart button (class btn-cafe kept for JS compatibility) */
+.btn-cafe {
+    background-color: var(--bc-white) !important;
+    color: var(--bc-dark) !important;
+    border: none !important;
+    border-radius: var(--bc-radius-btn) !important;
+    padding: 8px 20px !important;
+    font-family: var(--bc-font-sans) !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, color 0.2s !important;
+}
+
+.btn-cafe:hover {
+    background-color: var(--bc-tan) !important;
+    color: var(--bc-white) !important;
+}
+
+/* ── EMPTY / NO RESULTS STATE ───────────────────────────── */
+/* Rendered by loadMenu() when no items match — keep it visible */
+#menu .text-muted {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+/* ── ORDER STATUS ───────────────────────────────────────── */
+/* id="orderStatus" — startCountdown() writes innerHTML here */
+.bc-order-status {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 900;
+    text-align: center;
+    pointer-events: none;
+}
+
+.bc-order-status:not(:empty) {
+    background: var(--bc-dark);
+    color: var(--bc-white);
+    padding: 10px 24px;
+    border-radius: var(--bc-radius-btn);
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ── FLOATING CART BUTTON ───────────────────────────────── */
+/* Preserves all Bootstrap offcanvas trigger attrs */
+.bc-floating-cart {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bc-dark);
+    color: var(--bc-white);
+    border: none;
+    border-radius: var(--bc-radius-btn);
+    padding: 14px 22px;
+    font-family: var(--bc-font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.28);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.bc-floating-cart:hover {
+    transform: scale(1.05);
+    background: var(--bc-tan);
+}
+
+.bc-cart-label { line-height: 1; }
+
+/* id="cartCount" — renderCart() updates innerText here */
+.bc-cart-count {
+    background: #E53935;
+    color: var(--bc-white);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* ── OFFCANVAS CART ─────────────────────────────────────── */
+.bc-offcanvas {
+    background: var(--bc-cream) !important;
+    width: min(380px, 100vw) !important;
+}
+
+.bc-offcanvas-header {
+    background: var(--bc-dark) !important;
+    padding: 20px 24px !important;
+}
+
+.bc-offcanvas-title {
+    color: var(--bc-white) !important;
+    font-family: var(--bc-font-serif) !important;
+    font-size: 1.35rem !important;
+    margin: 0;
+}
+
+.bc-offcanvas-body {
+    padding: 20px 20px 24px !important;
+}
+
+/* Cart items — rendered by renderCart() into id="cart"
+   The JS produces .cart-item-anim wrappers — we style them */
+#cart .cart-item-anim {
+    background: var(--bc-white) !important;
+    border: 1.5px solid rgba(59,26,15,0.08) !important;
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+    margin-bottom: 12px !important;
+    animation: bcFadeInUp 0.3s ease;
+}
+
+#cart h6 {
+    font-family: var(--bc-font-sans) !important;
+    color: var(--bc-text-head) !important;
+    font-size: 0.95rem !important;
+}
+
+#cart small.text-muted {
+    color: var(--bc-text-muted) !important;
+}
+
+#cart .fw-bold {
+    color: var(--bc-dark) !important;
+}
+
+/* Qty +/- buttons from renderCart() */
+#cart .btn-outline-secondary {
+    border-color: rgba(59,26,15,0.2) !important;
+    color: var(--bc-dark) !important;
+    background: transparent !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
+    border-radius: 50% !important;
+}
+
+#cart .btn-outline-secondary:hover {
+    background: var(--bc-tan) !important;
+    border-color: var(--bc-tan) !important;
+    color: var(--bc-white) !important;
+}
+
+/* Empty cart message */
+#cart .text-center.text-muted {
+    color: var(--bc-text-muted) !important;
+    padding: 48px 16px;
+    font-size: 0.95rem;
+}
+
+/* Bill area */
+.bc-bill-area {
+    font-size: 0.9rem;
+    color: var(--bc-text-body);
+    margin-bottom: 12px;
+}
+
+.bc-offcanvas-footer { padding-top: 12px !important; }
+
+/* Place Order button — id="placeOrderBtn", onclick="placeOrder()" */
+.bc-btn-place-order {
+    background: var(--bc-dark) !important;
+    color: var(--bc-white) !important;
+    border: none !important;
+    border-radius: var(--bc-radius-btn) !important;
+    padding: 14px 24px !important;
+    font-family: var(--bc-font-sans) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em;
+    transition: background 0.2s !important;
+}
+
+.bc-btn-place-order:hover {
+    background: var(--bc-tan) !important;
+    color: var(--bc-white) !important;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+.bc-footer {
+    background: var(--bc-dark);
+    padding-bottom: 24px;
+}
+
+.bc-footer-divider {
+    border-color: rgba(255,255,255,0.15);
+    margin: 0;
+}
+
+.bc-footer-heading {
+    font-family: var(--bc-font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--bc-white);
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+}
+
+.bc-footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bc-footer-list li { margin-bottom: 8px; }
+
+.bc-footer-list a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+
+.bc-footer-list a:hover { color: var(--bc-tan); }
+
+.bc-social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bc-social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.bc-social-icon:hover {
+    background: var(--bc-tan);
+    color: var(--bc-white);
+}
+
+.bc-footer-copy {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.35);
+    margin: 12px 0 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 16px;
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes bcFadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Keep original keyframe name for .cart-item-anim compatibility */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+.cart-item-anim { animation: fadeInUp 0.4s ease forwards; }
+
+/* Bootstrap button transition passthrough */
+.btn { transition: all 0.25s ease; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .bc-hero { height: 380px; }
+    .bc-hero-content { max-width: 90%; }
+    :root { --bc-section-py: 56px; }
+    .bc-social-links { flex-direction: row; }
+}
+
+@media (max-width: 767.98px) {
+    .bc-hero { height: 300px; }
+    .bc-hero-headline { letter-spacing: 0.05em; }
+    :root { --bc-section-py: 40px; }
+
+    .bc-floating-cart {
+        bottom: 20px;
+        right: 16px;
+        padding: 12px 18px;
     }
 }
 
-/* Apply animation to cards and cart items */
-.card, .cart-item-anim {
-    animation: fadeInUp 0.4s ease forwards;
+@media (max-width: 575.98px) {
+    .bc-brand-text { font-size: 1.2rem; }
+    .bc-search-wrap { min-width: auto; width: 100%; }
+    .bc-cat-card { border-radius: 12px; }
 }
 
-/* Ensure buttons transition smoothly */
-.btn {
-    transition: all 0.3s ease;
-}
+/* ── SCROLLED NAVBAR EFFECT ─────────────────────────────── */
+/* Added via tiny inline script in cafe.js or via scroll listener;
+   bc-navbar class target. The visual shadow lifts on scroll. */

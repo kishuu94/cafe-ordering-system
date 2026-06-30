@@ -1,4 +1,3 @@
-
 // --- UI Helpers ---
 function showToast(message, type = 'error') {
     const toastEl = document.getElementById('appToast');

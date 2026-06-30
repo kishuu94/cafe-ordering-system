@@ -3,86 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Cafe Menu</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="css/style.css">
+    <title>Black Coffee — Premium Cafe Menu</title>
 
-    <link rel="icon" href="path/to/your-icon.png">
-    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts: Playfair Display (serif hero) + Poppins (body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <div class="container mt-3 text-center">
-        <h2 id="tableHeading"></h2>
+    <!-- ─────────────────────────────────────────
+         TABLE NUMBER HEADING (QR param — kept exactly)
+    ───────────────────────────────────────── -->
+    <div class="table-badge-wrap text-center" id="tableBadgeWrap">
+        <span class="table-badge" id="tableHeading"></span>
     </div>
 
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <!-- ─────────────────────────────────────────
+         NAVBAR
+         JS depends on: nothing directly — kept for UX
+         Search input ID: searchInput (used in filterMenu())
+    ───────────────────────────────────────── -->
+    <nav class="navbar navbar-expand-lg sticky-top bc-navbar">
         <div class="container">
-            <a class="navbar-brand fs-3 fw-bold" href="#">☕ The Daily Grind</a>
-            
-            <div class="d-flex ms-auto w-50 justify-content-end align-items-center">
-                <input type="text" id="searchInput" class="form-control rounded-pill me-3 shadow-sm w-75" placeholder="Search menu..." onkeyup="filterMenu()">
+            <!-- Logo -->
+            <a class="navbar-brand bc-brand" href="#">
+                <span class="bc-steam" aria-hidden="true">
+                    <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 14 Q22 8 20 4 M26 14 Q28 8 26 4 M32 14 Q34 8 32 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M10 20 Q8 26 10 32 Q12 38 10 44 H42 Q40 38 42 32 Q44 26 42 20 Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+                        <path d="M6 44 H46" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="bc-brand-text">Black Coffee</span>
+            </a>
+
+            <!-- Nav Toggle -->
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Nav Links -->
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto gap-lg-3">
+                    <li class="nav-item"><a class="nav-link bc-nav-link active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link bc-nav-link" href="#menu-section">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link bc-nav-link" href="#">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link bc-nav-link" href="#">Media</a></li>
+                    <li class="nav-item"><a class="nav-link bc-nav-link" href="#">Contact</a></li>
+                </ul>
+
+                <!-- Search — ID kept: searchInput, onkeyup kept: filterMenu() -->
+                <div class="bc-search-wrap ms-lg-3 mt-3 mt-lg-0">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control bc-search"
+                        placeholder="Search menu…"
+                        onkeyup="filterMenu()"
+                        aria-label="Search menu items"
+                    >
+                    <svg class="bc-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container py-5">
-        
-        <div class="row mb-5 justify-content-center">
-            <div class="col-md-6 text-center">  
+    <!-- ─────────────────────────────────────────
+         HERO BANNER
+    ───────────────────────────────────────── -->
+    <section class="bc-hero">
+        <div class="bc-hero-overlay"></div>
+        <div class="bc-hero-content">
+            <p class="bc-hero-eyebrow">Freshly Roasted</p>
+            <h1 class="bc-hero-headline">COFFEE</h1>
+            <a href="#menu-section" class="btn bc-btn-hero">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────
+         TOP CATEGORIES
+    ───────────────────────────────────────── -->
+    <section class="bc-section bc-categories-section" id="categories-section">
+        <div class="container">
+            <div class="bc-section-header text-center mb-4">
+                <h2 class="bc-section-title">TOP CATEGORIES</h2>
+                <p class="bc-section-subtitle">Explore The Recent Most Bought Drinks This Week</p>
+            </div>
+
+            <!-- Category filter buttons — onclick kept exactly -->
+            <div class="bc-filter-row d-flex justify-content-center mb-5 gap-2 flex-wrap">
+                <button class="btn bc-filter-btn bc-filter-active" onclick="filterMenu('All')">All</button>
+                <button class="btn bc-filter-btn" onclick="filterMenu('Coffee')">Coffee</button>
+                <button class="btn bc-filter-btn" onclick="filterMenu('Food')">Food</button>
+            </div>
+
+            <!-- Category showcase cards (visual only, not tied to JS logic) -->
+            <div class="row g-3 bc-category-cards">
+                <div class="col-6 col-md-3">
+                    <div class="bc-cat-card">
+                        <img src="https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400&q=80" alt="Hot Chocolate" loading="lazy">
+                        <div class="bc-cat-label">Hot Chocolate</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="bc-cat-card">
+                        <img src="https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&q=80" alt="Espresso Coffee" loading="lazy">
+                        <div class="bc-cat-label">Espresso Coffee</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="bc-cat-card">
+                        <img src="https://images.unsplash.com/photo-1569701813229-33284b643e3c?w=400&q=80" alt="Mocha Coffee" loading="lazy">
+                        <div class="bc-cat-label">Mocha Coffee</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="bc-cat-card">
+                        <img src="https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&q=80" alt="Latte Coffee" loading="lazy">
+                        <div class="bc-cat-label">Latte Coffee</div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="d-flex justify-content-center mb-4 gap-2">
-            <button class="btn btn-outline-dark rounded-pill active-filter" onclick="filterMenu('All')">All</button>
-            <button class="btn btn-outline-dark rounded-pill" onclick="filterMenu('Coffee')">Coffee</button>
-            <button class="btn btn-outline-dark rounded-pill" onclick="filterMenu('Food')">Food</button>
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="menu">
+    <!-- ─────────────────────────────────────────
+         MENU SECTION
+         ID: menu — loadMenu() renders cards here
+         All card onclick="addToCart()" calls come from JS
+    ───────────────────────────────────────── -->
+    <section class="bc-section bc-menu-section" id="menu-section">
+        <div class="container">
+            <div class="bc-section-header text-center mb-5">
+                <h2 class="bc-section-title">TOP Milk Shakes</h2>
+                <p class="bc-section-subtitle">Explore The Recent Most Bought Shakes This Week</p>
             </div>
-    </div>
 
-    <div id="orderStatus"></div>
+            <!-- 
+                ID "menu" MUST stay — loadMenu() targets this element
+                row/col classes preserved so Bootstrap grid still works
+            -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4" id="menu">
+                <!-- Menu items injected by loadMenu() in cafe.js -->
+            </div>
+        </div>
+    </section>
 
-    <button class="floating-cart d-flex align-items-center" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-        <span>🛒 Cart</span>
-        <span id="cartCount" class="cart-badge">0</span>
+    <!-- ─────────────────────────────────────────
+         ORDER STATUS — id="orderStatus" kept for startCountdown()
+    ───────────────────────────────────────── -->
+    <div id="orderStatus" class="bc-order-status"></div>
+
+    <!-- ─────────────────────────────────────────
+         FLOATING CART BUTTON
+         id="cartCount" kept for renderCart()
+         data-bs-toggle and data-bs-target kept for Bootstrap offcanvas
+    ───────────────────────────────────────── -->
+    <button class="bc-floating-cart" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-label="Open cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="bc-cart-label">Cart</span>
+        <span id="cartCount" class="bc-cart-count">0</span>
     </button>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-        <div class="offcanvas-header border-bottom bg-light">
-            <h2 class="offcanvas-title" id="cartOffcanvasLabel">Your Order</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <!-- ─────────────────────────────────────────
+         OFFCANVAS CART
+         id="cartOffcanvas" — Bootstrap offcanvas target
+         id="cart" — renderCart() injects items here
+         id="bill" — kept for any billing HTML
+         id="placeOrderBtn" — onclick="placeOrder()" kept
+    ───────────────────────────────────────── -->
+    <div class="offcanvas offcanvas-end bc-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+        <div class="offcanvas-header bc-offcanvas-header">
+            <h2 class="offcanvas-title bc-offcanvas-title" id="cartOffcanvasLabel">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px;" aria-hidden="true">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                Your Order
+            </h2>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body d-flex flex-column">
-            
+        <div class="offcanvas-body d-flex flex-column bc-offcanvas-body">
+
+            <!-- Cart items injected by renderCart() — id="cart" kept -->
             <div id="cart" class="flex-grow-1 overflow-auto mb-3"></div>
-            
-            <div class="mt-auto pt-3 border-top">
-                <button id="placeOrderBtn" class="btn btn-cafe w-100 py-3 fs-5" onclick="placeOrder()">
+
+            <!-- Bill and Place Order — ids kept -->
+            <div class="mt-auto pt-3 bc-offcanvas-footer">
+                <div id="bill" class="bc-bill-area"></div>
+                <button id="placeOrderBtn" class="btn bc-btn-place-order w-100" onclick="placeOrder()">
                     Place Order
                 </button>
-                <div id="bill"></div>
             </div>
         </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <!-- ─────────────────────────────────────────
+         TOAST NOTIFICATIONS
+         id="appToast", id="toastMessage" — showToast() depends on these
+    ───────────────────────────────────────── -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1200;">
         <div id="appToast" class="toast align-items-center border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body fw-bold fs-6" id="toastMessage"></div>
                 <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
-    </div> 
+    </div>
 
-    <script src="./js/cafe.js"></script>
+    <!-- ─────────────────────────────────────────
+         FOOTER
+    ───────────────────────────────────────── -->
+    <footer class="bc-footer">
+        <div class="container">
+            <hr class="bc-footer-divider">
+            <div class="row g-4 py-4">
+                <div class="col-6 col-md-3">
+                    <h6 class="bc-footer-heading">Products</h6>
+                    <ul class="bc-footer-list">
+                        <li><a href="#">Mocha Coffee</a></li>
+                        <li><a href="#">Espresso Coffee</a></li>
+                        <li><a href="#">Latte Coffee</a></li>
+                        <li><a href="#">Milk Shakes</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="bc-footer-heading">Category</h6>
+                    <ul class="bc-footer-list">
+                        <li><a href="#">Coffee</a></li>
+                        <li><a href="#">Food</a></li>
+                        <li><a href="#">Shakes</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="bc-footer-heading">Company Info</h6>
+                    <ul class="bc-footer-list">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="bc-footer-heading">Follow Us</h6>
+                    <div class="bc-social-links">
+                        <a href="#" class="bc-social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="bc-social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="bc-social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="currentColor"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <p class="bc-footer-copy text-center">&copy; 2025 Black Coffee. All rights reserved.</p>
+        </div>
+    </footer>
 
+    <!-- Bootstrap JS bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Cafe ordering logic — UNCHANGED -->
+    <script src="./js/cafe.js"></script>
 </body>
 </html>
